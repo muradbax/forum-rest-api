@@ -10,37 +10,58 @@ import org.forum.api.jdbc.dao.MessageDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Uses JDBC API implementation for persistence.
+ */
 @Service("jdbc")
 public class MessageServiceJDBCImpl implements MessageService {
-	
+
+	/**
+	 * {@ MessageDAO} persistence layer object for JDBC API.
+	 */
 	@Autowired
 	MessageDAO messageDAO;
 
-	@Override
-	public Message createMessage(Message message) {
-		ErrorUtility.checkIfEmpty(message);
-		return messageDAO.createMessage(message);		
-	}
-
+	/**
+	 * @see org.forum.api.services.MessageService#getMessageHeaderList()
+	 */
 	@Override
 	public List<MessageHeader> getMessageHeaderList() {
 		return messageDAO.getMessageHeaderList();
 	}
-
+	
+	/**
+	 * @see org.forum.api.services.MessageService#getMessageBodyById(Long)
+	 */
 	@Override
 	public MessageBody getMessageBodyById(Long id) {
 		return messageDAO.getMessageBodyById(id);
 	}
+	
+	/**
+	 * @see org.forum.api.services.MessageService#createMessage(Message)
+	 */
+	@Override
+	public Message createMessage(Message message) {
+		ErrorUtility.isEmptyFields(message);
+		return messageDAO.createMessage(message);
+	}
 
+	/**
+	 * @see org.forum.api.services.MessageService#updateMessageById(Long, Message)
+	 */
 	@Override
 	public Message updateMessageById(Long id, Message message) {
-		ErrorUtility.checkIfEmpty(message);
+		ErrorUtility.isEmptyFields(message);
 		return messageDAO.updateMessageById(id, message);
 	}
 
+	/**
+	 * @see org.forum.api.services.MessageService#deleteMessageById(Long)
+	 */
 	@Override
 	public void deleteMessageById(Long id) {
 		messageDAO.deleteMessageById(id);
 	}
-	
+
 }
