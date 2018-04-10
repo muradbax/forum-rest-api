@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.forum</groupId>
-	<artifactId>api</artifactId>
-	<version>0.0.1</version>
+	<artifactId>forum-api</artifactId>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>forum-api</name>
-	<description>Forum API</description>
+	<description>Forum REST API</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
