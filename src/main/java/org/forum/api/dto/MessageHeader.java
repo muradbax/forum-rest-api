@@ -2,6 +2,7 @@ package org.forum.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Data model class representing sub-model of {@link Message} model with message
@@ -9,6 +10,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class MessageHeader {
 
 	/** Message Id. */
