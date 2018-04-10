@@ -11,45 +11,66 @@ import org.forum.api.jpa.dao.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Uses JPA implementation for persistence.
+ */
 @Service("jpa")
 public class MessageServiceJPAImpl implements MessageService {
 
+	/**
+	 * {@ MessageRepo} persistence layer interface for JPA API.
+	 */
 	@Autowired
 	MessageRepository messageRepo;
-	
-	@Override
-	public Message createMessage(Message message) {
-		ErrorUtility.checkIfEmpty(message);
-		return messageRepo.save(message);
-	}
 
+	/**
+	 * @see org.forum.api.services.MessageService#getMessageHeaderList()
+	 */
 	@Override
 	public List<MessageHeader> getMessageHeaderList() {
 		return messageRepo.getMessageHeaderList();
 	}
 
+	/**
+	 * @see org.forum.api.services.MessageService#getMessageBodyById(Long)
+	 */
 	@Override
 	public MessageBody getMessageBodyById(Long id) {
 		return messageRepo.getMessageBodyById(id)
-				.orElseThrow(() -> new DataNotFoundException(ErrorUtility.getNoDataFoundExceptionMessage(id)));
+				.orElseThrow(() -> new DataNotFoundException(ErrorUtility.getDataNotFoundExceptionMessage(id)));
 	}
 
+	/**
+	 * @see org.forum.api.services.MessageService#createMessage(Message)
+	 */
+	@Override
+	public Message createMessage(Message message) {
+		ErrorUtility.isEmptyFields(message);
+		return messageRepo.save(message);
+	}
+
+	/**
+	 * @see org.forum.api.services.MessageService#updateMessageById(Long, Message)
+	 */
 	@Override
 	public Message updateMessageById(Long id, Message message) {
-		ErrorUtility.checkIfEmpty(message);
-		
+		ErrorUtility.isEmptyFields(message);
+
 		Message messageToUpdate = messageRepo.findById(id)
-				.orElseThrow(() -> new DataNotFoundException(ErrorUtility.getNoDataFoundExceptionMessage(id)));
-		
+				.orElseThrow(() -> new DataNotFoundException(ErrorUtility.getDataNotFoundExceptionMessage(id)));
+
 		messageToUpdate.setHeader(message.getHeader());
 		messageToUpdate.setBody(message.getBody());
-		
+
 		return messageRepo.save(messageToUpdate);
 	}
-	
+
+	/**
+	 * @see org.forum.api.services.MessageService#deleteMessageById(Long)
+	 */
 	@Override
 	public void deleteMessageById(Long id) {
 		messageRepo.deleteById(id);
 	}
-		
+
 }

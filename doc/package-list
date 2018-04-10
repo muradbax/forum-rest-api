@@ -1,0 +1,8 @@
+org.forum.api
+org.forum.api.commons
+org.forum.api.controller
+org.forum.api.dto
+org.forum.api.exception
+org.forum.api.jdbc.dao
+org.forum.api.jpa.dao
+org.forum.api.services

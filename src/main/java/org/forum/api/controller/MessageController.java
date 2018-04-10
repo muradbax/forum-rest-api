@@ -17,41 +17,91 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin(origins = {"${spring.origin.cors}"})
+/**
+ * Controller class defines REST API for manipulating messages entries.
+ */
+@CrossOrigin(origins = { "${spring.origin.cors}" })
 @RestController
 @RequestMapping("/api/message")
 public class MessageController {
-	
-	@Resource(name="${spring.data.persistence}")
+
+	/**
+	 * {@ MessageService} service layer object. correct service implementation to be
+	 * injected is defined in properties file.
+	 */
+	@Resource(name = "${spring.data.persistence}")
 	private MessageService messageService;
-		
+
+	/**
+	 * Maps all GET requests to base url and returns list of {@link MessageHeader}
+	 * data models representing message header with corresponding id.
+	 *
+	 * @return list of {@link MessageHeader} data models
+	 */
 	@GetMapping
-    public List<MessageHeader> getHeaderList() {
+	public List<MessageHeader> getHeaderList() {
 		return messageService.getMessageHeaderList();
-    }
-	
-	@GetMapping("/{id}")
-	public MessageBody getBodyById(@PathVariable(value="id") Long id) {
-		return messageService.getMessageBodyById(id);	
 	}
-	
+
+	/**
+	 * Maps all GET requests to base url/id and returns {@link MessageBody} data
+	 * model representing body of message based on specified {@code id} from
+	 * database.
+	 *
+	 * @param id
+	 *            id of message body to get
+	 * @return {@link MessageBody} data model
+	 */
+	@GetMapping("/{id}")
+	public MessageBody getBodyById(@PathVariable(value = "id") Long id) {
+		return messageService.getMessageBodyById(id);
+	}
+
+	/**
+	 * Maps all POST requests to base url and creates message entry in database with
+	 * parameters from specified {@link Message} data model which is returned after
+	 * it is created.
+	 *
+	 * @param message
+	 *            {@link Message} data model to create in database
+	 * @return {@link Message} data model
+	 */
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Message create(@RequestBody Message message) {		
+	public Message create(@RequestBody Message message) {
 		return messageService.createMessage(message);
 	}
-	
+
+	/**
+	 * Maps all PUT requests to base url/id and updates message entry in database
+	 * based on specified {@code id} with parameters from specified {@link Message}
+	 * data model which is returned after it is created.
+	 *
+	 * @param id
+	 *            id of message to update
+	 * @param message
+	 *            {@link Message} data model to update in database
+	 * @return {@link Message} data model
+	 */
 	@PutMapping("/{id}")
-	public Message updateById(@PathVariable(value="id") long id, @RequestBody Message message) {
-		return messageService.updateMessageById(id, message);		
+	public Message updateById(@PathVariable(value = "id") Long id, @RequestBody Message message) {
+		return messageService.updateMessageById(id, message);
 	}
-	
+
+	/**
+	 * Maps all DELETE requests to base url/id and deletes message entry in database
+	 * based on specified {@code id}.
+	 *
+	 * @param id
+	 *            id of message to delete
+	 */
 	@DeleteMapping("/{id}")
-	public void deleteById(@PathVariable(value="id") long id) {
-		messageService.deleteMessageById(new Long(id));		
+	public void deleteById(@PathVariable(value = "id") Long id) {
+		messageService.deleteMessageById(new Long(id));
 	}
-	
+
 }
