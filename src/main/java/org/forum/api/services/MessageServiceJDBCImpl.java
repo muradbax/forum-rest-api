@@ -8,12 +8,15 @@ import org.forum.api.dto.MessageBody;
 import org.forum.api.dto.MessageHeader;
 import org.forum.api.jdbc.dao.MessageDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 /**
- * Uses JDBC API implementation for persistence.
+ * Uses JDBC API implementation in service layer for persistent data
+ * manipulations.
  */
-@Service("jdbc")
+@Service
+@Profile("jdbc")
 public class MessageServiceJDBCImpl implements MessageService {
 
 	/**
@@ -29,7 +32,7 @@ public class MessageServiceJDBCImpl implements MessageService {
 	public List<MessageHeader> getMessageHeaderList() {
 		return messageDAO.getMessageHeaderList();
 	}
-	
+
 	/**
 	 * @see org.forum.api.services.MessageService#getMessageBodyById(Long)
 	 */
@@ -37,7 +40,7 @@ public class MessageServiceJDBCImpl implements MessageService {
 	public MessageBody getMessageBodyById(Long id) {
 		return messageDAO.getMessageBodyById(id);
 	}
-	
+
 	/**
 	 * @see org.forum.api.services.MessageService#createMessage(Message)
 	 */

@@ -9,12 +9,14 @@ import org.forum.api.dto.MessageHeader;
 import org.forum.api.exception.DataNotFoundException;
 import org.forum.api.jpa.dao.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 /**
- * Uses JPA implementation for persistence.
+ * Uses JPA implementation in service layer for persistent data manipulations.
  */
-@Service("jpa")
+@Service
+@Profile("jpa")
 public class MessageServiceJPAImpl implements MessageService {
 
 	/**
