@@ -99,7 +99,7 @@ public class MessageController {
 	 */
 	@DeleteMapping("/{id}")
 	public void deleteById(@PathVariable(value = "id") Long id) {
-		messageService.deleteMessageById(new Long(id));
+		messageService.deleteMessageById(id);
 	}
 
 }
