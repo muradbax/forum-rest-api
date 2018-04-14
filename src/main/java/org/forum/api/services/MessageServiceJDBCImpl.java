@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class MessageServiceJDBCImpl implements MessageService {
 
 	/**
-	 * {@ MessageDAO} persistence layer object for JDBC API.
+	 * {@code MessageDAO} persistence layer object for JDBC API.
 	 */
 	@Autowired
 	MessageDAO messageDAO;

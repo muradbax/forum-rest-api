@@ -5,10 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.forum.api.commons.ErrorUtility;
 import org.forum.api.dto.Message;
 import org.forum.api.dto.MessageBody;
 import org.forum.api.dto.MessageHeader;
+import org.forum.api.exception.DataNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -44,7 +47,14 @@ public class MessageDAOImpl implements MessageDAO {
 	@Override
 	public MessageBody getMessageBodyById(Long id) {
 		String sql = "SELECT body FROM message WHERE message_id=?";
-		MessageBody messageBody = jdbcTemplate.queryForObject(sql, MessageBody.class, id);
+		
+		MessageBody messageBody = null;
+		try {
+			messageBody = jdbcTemplate.queryForObject(sql, MessageBody.class, id);
+		} catch (DataAccessException dataAccessException) {
+			throw new DataNotFoundException(ErrorUtility.getDataNotFoundExceptionMessage(id));
+		}
+		
 		return messageBody;
 	}
 	
@@ -81,8 +91,12 @@ public class MessageDAOImpl implements MessageDAO {
 	@Override
 	public Message updateMessageById(Long id, Message message) {
 		String sql = "UPDATE message SET header=?,body=? WHERE message_id=?";
-		jdbcTemplate.update(sql, message.getHeader(), message.getBody(), id);
-				
+		int rowsAffected = jdbcTemplate.update(sql, message.getHeader(), message.getBody(), id);
+		
+		if (rowsAffected<=0) {
+			throw new DataNotFoundException(ErrorUtility.getDataNotFoundExceptionMessage(id));
+		}
+		
 		message.setId(id);
 
 		return message;
@@ -94,7 +108,11 @@ public class MessageDAOImpl implements MessageDAO {
 	@Override
 	public void deleteMessageById(Long id) {
 		String sql = "DELETE FROM message WHERE message_id=?";
-		jdbcTemplate.update(sql, id);
+		int rowsAffected = jdbcTemplate.update(sql, id);
+		
+		if (rowsAffected<=0) {
+			throw new DataNotFoundException(ErrorUtility.getDataNotFoundExceptionMessage(id));
+		}
 	}
 	
 }
