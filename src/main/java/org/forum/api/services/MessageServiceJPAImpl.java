@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class MessageServiceJPAImpl implements MessageService {
 
 	/**
-	 * {@ MessageRepo} persistence layer interface for JPA API.
+	 * {@code MessageRepo} persistence layer interface for JPA API.
 	 */
 	@Autowired
 	MessageRepository messageRepo;
@@ -72,6 +72,9 @@ public class MessageServiceJPAImpl implements MessageService {
 	 */
 	@Override
 	public void deleteMessageById(Long id) {
+		messageRepo.findById(id)
+				.orElseThrow(() -> new DataNotFoundException(ErrorUtility.getDataNotFoundExceptionMessage(id)));
+
 		messageRepo.deleteById(id);
 	}
 
