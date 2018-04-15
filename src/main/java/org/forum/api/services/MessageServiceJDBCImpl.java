@@ -6,6 +6,7 @@ import org.forum.api.commons.ErrorUtility;
 import org.forum.api.dto.Message;
 import org.forum.api.dto.MessageBody;
 import org.forum.api.dto.MessageHeader;
+import org.forum.api.exception.EmptyInputException;
 import org.forum.api.jdbc.dao.MessageDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -46,7 +47,9 @@ public class MessageServiceJDBCImpl implements MessageService {
 	 */
 	@Override
 	public Message createMessage(Message message) {
-		ErrorUtility.isEmptyFields(message);
+		if (ErrorUtility.hasEmptyFields(message)) {
+			throw new EmptyInputException(ErrorUtility.getEmptyInputExceptionMessage(message));
+		}
 		return messageDAO.createMessage(message);
 	}
 
@@ -55,7 +58,9 @@ public class MessageServiceJDBCImpl implements MessageService {
 	 */
 	@Override
 	public Message updateMessageById(Long id, Message message) {
-		ErrorUtility.isEmptyFields(message);
+		if (ErrorUtility.hasEmptyFields(message)) {
+			throw new EmptyInputException(ErrorUtility.getEmptyInputExceptionMessage(message));
+		}
 		return messageDAO.updateMessageById(id, message);
 	}
 

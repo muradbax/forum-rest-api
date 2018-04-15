@@ -36,7 +36,7 @@ public class MessageControllerTest {
 	private Message message1Dummy;
 	private Message message2Dummy;
 	private Message messageInvalidDummy;
-	
+
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -92,36 +92,30 @@ public class MessageControllerTest {
 	}
 
 	@Test
-	public void testCreateMessage() throws Exception {
+	public void testCreate() throws Exception {
 		when(messageService.createMessage(message1Dummy)).thenReturn(message1Dummy);
 
-		mockMvc.perform(
-				post(BASE_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtility.convertToJson(message1Dummy)))
-				.andExpect(status().isCreated())
+		mockMvc.perform(post(BASE_URL).contentType(MediaType.APPLICATION_JSON)
+				.content(TestUtility.convertToJson(message1Dummy))).andExpect(status().isCreated())
 				.andExpect(jsonPath("$.id", is(message1Dummy.getId().intValue())))
 				.andExpect(jsonPath("$.header", is(message1Dummy.getHeader())))
 				.andExpect(jsonPath("$.body", is(message1Dummy.getBody())));
 	}
 
 	@Test
-	public void testCreateMessage_emptyParameter() throws Exception {		
-		EmptyInputException emptyInputException = null;
-		try {
-			ErrorUtility.isEmptyFields(messageInvalidDummy);
-		} catch (EmptyInputException exception) {
-			emptyInputException = exception;
-		}
+	public void testCreate_emptyParameter() throws Exception {
+		EmptyInputException emptyInputException = new EmptyInputException(
+				ErrorUtility.getEmptyInputExceptionMessage(messageInvalidDummy));
 
 		when(messageService.createMessage(messageInvalidDummy)).thenThrow(emptyInputException);
 
-		mockMvc.perform(
-				post(BASE_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtility.convertToJson(messageInvalidDummy)))
-				.andExpect(status().isBadRequest())
+		mockMvc.perform(post(BASE_URL).contentType(MediaType.APPLICATION_JSON)
+				.content(TestUtility.convertToJson(messageInvalidDummy))).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.errorMessageMap", is(emptyInputException.getMessageMap())));
 	}
 
 	@Test
-	public void testUpdateMessageById() throws Exception {
+	public void testUpdateById() throws Exception {
 		when(messageService.updateMessageById(message1Dummy.getId(), message1Dummy)).thenReturn(message1Dummy);
 
 		mockMvc.perform(put(BASE_URL + message1Dummy.getId()).contentType(MediaType.APPLICATION_JSON)
@@ -132,48 +126,42 @@ public class MessageControllerTest {
 	}
 
 	@Test
-	public void testUpdateMessageById_incorrectId() throws Exception {
+	public void testUpdateById_incorrectId() throws Exception {
 		DataNotFoundException dataNotFoundException = new DataNotFoundException(
 				ErrorUtility.getDataNotFoundExceptionMessage(messageInvalidDummy.getId()));
 
-		when(messageService.updateMessageById(messageInvalidDummy.getId(), messageInvalidDummy)).thenThrow(dataNotFoundException);
+		when(messageService.updateMessageById(messageInvalidDummy.getId(), messageInvalidDummy))
+				.thenThrow(dataNotFoundException);
 
 		mockMvc.perform(put(BASE_URL + messageInvalidDummy.getId()).contentType(MediaType.APPLICATION_JSON)
-				.content(TestUtility.convertToJson(messageInvalidDummy)))
-				.andExpect(status().isNotFound())
+				.content(TestUtility.convertToJson(messageInvalidDummy))).andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.errorMessage", is(dataNotFoundException.getMessage())));
 	}
 
 	@Test
-	public void testUpdateMessageById_emptyParameters() throws Exception {		
-		EmptyInputException emptyInputException = null;
-		
-		try {
-			ErrorUtility.isEmptyFields(messageInvalidDummy);
-		} catch (EmptyInputException exception) {
-			emptyInputException = exception;
-		}
+	public void testUpdateById_emptyParameters() throws Exception {
+		EmptyInputException emptyInputException = new EmptyInputException(
+				ErrorUtility.getEmptyInputExceptionMessage(messageInvalidDummy));
 
-		when(messageService.updateMessageById(messageInvalidDummy.getId(), messageInvalidDummy)).thenThrow(emptyInputException);
+		when(messageService.updateMessageById(messageInvalidDummy.getId(), messageInvalidDummy))
+				.thenThrow(emptyInputException);
 
 		mockMvc.perform(put(BASE_URL + messageInvalidDummy.getId()).contentType(MediaType.APPLICATION_JSON)
-				.content(TestUtility.convertToJson(messageInvalidDummy)))
-				.andExpect(status().isBadRequest())
+				.content(TestUtility.convertToJson(messageInvalidDummy))).andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.errorMessageMap", is(emptyInputException.getMessageMap())));
 	}
 
 	@Test
-	public void testDeleteMessageById() throws Exception {
+	public void testDeleteById() throws Exception {
 		Long messageId = message1Dummy.getId();
 
-		mockMvc.perform(delete(BASE_URL + messageId))
-				.andExpect(status().isOk());
+		mockMvc.perform(delete(BASE_URL + messageId)).andExpect(status().isOk());
 
 		verify(messageService).deleteMessageById(messageId);
 	}
 
 	@Test
-	public void testDeleteMessageById_incorrectId() throws Exception {
+	public void testDeleteById_incorrectId() throws Exception {
 		Long messageId = messageInvalidDummy.getId();
 		DataNotFoundException dataNotFoundException = new DataNotFoundException(
 				ErrorUtility.getDataNotFoundExceptionMessage(messageId));
