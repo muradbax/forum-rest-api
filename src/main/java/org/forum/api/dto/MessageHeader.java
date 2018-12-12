@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class MessageHeader {
 
 	/** Message Id. */
-	private long id;
+	private Long id;
 
 	/** Message header. */
 	private String header;

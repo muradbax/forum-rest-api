@@ -2,12 +2,11 @@ package org.forum.api.controller;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.forum.api.dto.Message;
 import org.forum.api.dto.MessageBody;
 import org.forum.api.dto.MessageHeader;
 import org.forum.api.services.MessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,10 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class MessageController {
 
 	/**
-	 * {@ MessageService} service layer object. correct service implementation to be
-	 * injected is defined in properties file.
+	 * {@ MessageService} service layer object. Correct service layer implementation
+	 * injected is based on profile used defined in properties file.
 	 */
-	@Resource(name = "${spring.data.persistence}")
+	@Autowired
 	private MessageService messageService;
 
 	/**
@@ -101,7 +99,7 @@ public class MessageController {
 	 */
 	@DeleteMapping("/{id}")
 	public void deleteById(@PathVariable(value = "id") Long id) {
-		messageService.deleteMessageById(new Long(id));
+		messageService.deleteMessageById(id);
 	}
 
 }

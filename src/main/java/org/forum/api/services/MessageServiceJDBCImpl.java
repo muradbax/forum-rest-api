@@ -6,18 +6,22 @@ import org.forum.api.commons.ErrorUtility;
 import org.forum.api.dto.Message;
 import org.forum.api.dto.MessageBody;
 import org.forum.api.dto.MessageHeader;
+import org.forum.api.exception.EmptyInputException;
 import org.forum.api.jdbc.dao.MessageDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 /**
- * Uses JDBC API implementation for persistence.
+ * Uses JDBC API implementation in service layer for persistent data
+ * manipulations.
  */
-@Service("jdbc")
+@Service
+@Profile("jdbc")
 public class MessageServiceJDBCImpl implements MessageService {
 
 	/**
-	 * {@ MessageDAO} persistence layer object for JDBC API.
+	 * {@code MessageDAO} persistence layer object for JDBC API.
 	 */
 	@Autowired
 	MessageDAO messageDAO;
@@ -29,7 +33,7 @@ public class MessageServiceJDBCImpl implements MessageService {
 	public List<MessageHeader> getMessageHeaderList() {
 		return messageDAO.getMessageHeaderList();
 	}
-	
+
 	/**
 	 * @see org.forum.api.services.MessageService#getMessageBodyById(Long)
 	 */
@@ -37,13 +41,15 @@ public class MessageServiceJDBCImpl implements MessageService {
 	public MessageBody getMessageBodyById(Long id) {
 		return messageDAO.getMessageBodyById(id);
 	}
-	
+
 	/**
 	 * @see org.forum.api.services.MessageService#createMessage(Message)
 	 */
 	@Override
 	public Message createMessage(Message message) {
-		ErrorUtility.isEmptyFields(message);
+		if (ErrorUtility.hasEmptyFields(message)) {
+			throw new EmptyInputException(ErrorUtility.getEmptyInputExceptionMessage(message));
+		}
 		return messageDAO.createMessage(message);
 	}
 
@@ -52,7 +58,9 @@ public class MessageServiceJDBCImpl implements MessageService {
 	 */
 	@Override
 	public Message updateMessageById(Long id, Message message) {
-		ErrorUtility.isEmptyFields(message);
+		if (ErrorUtility.hasEmptyFields(message)) {
+			throw new EmptyInputException(ErrorUtility.getEmptyInputExceptionMessage(message));
+		}
 		return messageDAO.updateMessageById(id, message);
 	}
 

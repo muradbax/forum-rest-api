@@ -16,38 +16,45 @@ import org.springframework.http.ResponseEntity;
  * error conditions checks, render correctly formed error messages transfer
  * object when exception is thrown and define correct formed error message for
  * different types of exceptions thrown.
- * 
- * @author Murad Bakhshaliyev
  */
 public class ErrorUtility {
 
 	/**
-	 * Checks if fields of specified {@link Message} model object are empty, if so
-	 * throw custom {@link EmptyInputException} with corresponding error message
-	 * represented by map.
+	 * Checks if fields of specified {@link Message} model object are empty.
 	 *
 	 * @param message
 	 *            {@link Message} object to check fields
-	 * 
-	 * @throws EmptyInputException
-	 *             if one of the fields is empty
+	 * @return true, if successful
 	 */
-	public static void isEmptyFields(Message message) throws EmptyInputException {
-		boolean isEmptyField = false;
+	public static boolean hasEmptyFields(Message message) {
+		boolean hasEmptyFields = false;
 
+		if (message.getHeader().isEmpty() || message.getBody().isEmpty()) {
+			hasEmptyFields = true;
+		}
+
+		return hasEmptyFields;
+	}
+
+	/**
+	 * Get corresponding error message map to pass to custom
+	 * {@link EmptyInputException} when it is thrown.
+	 *
+	 * @param message
+	 *            {@link Message} object for error message map formation
+	 * @return error message map
+	 */
+	public static Map<String, String> getEmptyInputExceptionMessage(Message message) {
 		Map<String, String> messageMap = new HashMap<String, String>();
+
 		if (message.getHeader().isEmpty()) {
 			messageMap.put("header", "header is required");
-			isEmptyField = true;
 		}
 		if (message.getBody().isEmpty()) {
 			messageMap.put("body", "body is required");
-			isEmptyField = true;
 		}
 
-		if (isEmptyField) {
-			throw new EmptyInputException(messageMap);
-		}
+		return messageMap;
 	}
 
 	/**
